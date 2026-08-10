@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import Header from './components/Header';
-import Navbar from './components/Navbar';
-import LoginPage from './pages/LoginPage';
-import MisCitasPage from './pages/MisCitasPage';
-import AgendarPage from './pages/AgendarPage';
-import EspecialidadesPage from './pages/EspecialidadesPage';
-import { obtenerEspecialidades, registrarCita, obtenerCitasPorPaciente, cancelarCita } from './services/api';
+import Header from './components/Header.jsx';
+import Navbar from './components/Navbar.jsx';
+import LoginPage from './pages/LoginPage.jsx';
+import MisCitasPage from './pages/MisCitasPage.jsx';
+import AgendarPage from './pages/AgendarPage.jsx';
+import EspecialidadesPage from './pages/EspecialidadesPage.jsx';
+import { obtenerEspecialidades, registrarCita, obtenerCitasPorPaciente, cancelarCita } from './services/api.js';
 
 export default function App() {
   const [usuario, setUsuario] = useState(null);
@@ -72,18 +72,21 @@ export default function App() {
 
   if (!usuario) {
     return (
-      <div className="app-container">
+      <div className="min-h-screen bg-slate-50">
         <Header usuario={null} />
-        <main>
+        <main className="max-w-md mx-auto p-4">
           <LoginPage onLogin={(user) => setUsuario(user)} />
         </main>
       </div>
     );
   }
 
-  return (
+return (
     <div className="app-container">
       <Header usuario={usuario} onLogout={() => setUsuario(null)} />
+
+      {/* Reubicado inmediatamente debajo del Header */}
+      <Navbar tab={tab} setTab={setTab} onLogout={() => setUsuario(null)} />
 
       <main>
         {mensaje && (
@@ -104,8 +107,6 @@ export default function App() {
           <EspecialidadesPage especialidades={especialidades} />
         )}
       </main>
-
-      <Navbar tab={tab} setTab={setTab} />
     </div>
   );
 }
