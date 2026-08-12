@@ -3,7 +3,7 @@ import Header from './components/Header.jsx';
 import Navbar from './components/Navbar.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import AgendarPage from './pages/AgendarPage.jsx';
-import MessageCard from './components/MessageCard';
+import MessageCard from './components/MessageCard.jsx';
 import MisCitasPage from './pages/MisCitasPage.jsx';
 import EspecialidadesPage from './pages/EspecialidadesPage.jsx';
 import { obtenerEspecialidades, registrarCita, obtenerCitasPorPaciente, cancelarCita } from './services/api.js';
@@ -20,7 +20,7 @@ export default function App() {
     setCargando(true);
     try {
       const data = await obtenerCitasPorPaciente(cedula);
-      setMisCitas(data);
+      setMisCitas(data || []);
     } catch (err) {
       console.error('Error al cargar citas:', err);
     } finally {
@@ -32,10 +32,16 @@ export default function App() {
     if (usuario) {
       cargarCitas(usuario.cedula);
       obtenerEspecialidades()
-        .then(data => setEspecialidades(data))
+        .then(data => setEspecialidades(data || []))
         .catch(err => console.error(err));
     }
   }, [usuario]);
+
+  // Limpiar mensajes de error/éxito al cambiar de pestaña
+  const handleSetTab = (nuevaTab) => {
+    setMensaje(null);
+    setTab(nuevaTab);
+  };
 
   const handleAgendar = async (formCita) => {
     setCargando(true);
@@ -47,7 +53,7 @@ export default function App() {
         ...formCita
       };
       await registrarCita(payload);
-      setMensaje({ tipo: 'éxito', texto: '¡Cita registrada con éxito y vinculada a HL7 FHIR!' });
+      setMensaje({ tipo: 'exito', texto: '¡Cita registrada con éxito y vinculada a HL7 FHIR!' });
       await cargarCitas(usuario.cedula);
       setTimeout(() => {
         setMensaje(null);
@@ -82,29 +88,19 @@ export default function App() {
     );
   }
 
-// En tu JSX:
-{error && (
-  <MessageCard 
-    mensaje={error} 
-    tipo="error" 
-    onClose={() => setError(null)} 
-  />
-)}  
-
-return (
+  return (
     <div className="app-container">
       <Header usuario={usuario} onLogout={() => setUsuario(null)} />
 
-      {/* Reubicado inmediatamente debajo del Header */}
-      <Navbar tab={tab} setTab={setTab} onLogout={() => setUsuario(null)} />
+      <Navbar tab={tab} setTab={handleSetTab} onLogout={() => setUsuario(null)} />
 
       <main>
         {mensaje && (
-          <div className="card" style={{ backgroundColor: mensaje.tipo === 'éxito' ? '#dcfce7' : '#fee2e2' }}>
-            <p style={{ fontSize: '0.85rem', color: mensaje.tipo === 'éxito' ? '#15803d' : '#b91c1c' }}>
-              {mensaje.texto}
-            </p>
-          </div>
+          <MessageCard
+            mensaje={mensaje.texto}
+            tipo={mensaje.tipo}
+            onClose={() => setMensaje(null)}
+          />
         )}
 
         {tab === 'citas' && (
