@@ -12,7 +12,16 @@ export default function AgendarPage({ onAgendar, cargando }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onAgendar(formCita);
+
+    // Formatear la fecha para asegurar siempre segundos `:00` antes de enviar a Quarkus
+    const fechaFormateada = formCita.fecha.length === 16 
+      ? `${formCita.fecha}:00` 
+      : formCita.fecha;
+
+    onAgendar({
+      ...formCita,
+      fecha: fechaFormateada
+    });
   };
 
   return (
