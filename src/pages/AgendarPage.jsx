@@ -12,16 +12,23 @@ export default function AgendarPage({ onAgendar, cargando }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    e.stopPropagation();
 
-    // Formatear la fecha para asegurar siempre segundos `:00` antes de enviar a Quarkus
+    // Asegurar formato de fecha con segundos para Jackson
     const fechaFormateada = formCita.fecha.length === 16 
       ? `${formCita.fecha}:00` 
       : formCita.fecha;
 
-    onAgendar({
-      ...formCita,
+    const datosAEnviar = {
+      especialidad: formCita.especialidad,
+      tipoSeguro: formCita.tipoSeguro,
+      numeroSeguro: formCita.numeroSeguro,
+      tipoCita: formCita.tipoCita,
+      modalidad: formCita.modalidad,
       fecha: fechaFormateada
-    });
+    };
+
+    onAgendar(datosAEnviar);
   };
 
   return (
