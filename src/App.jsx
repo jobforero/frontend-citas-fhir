@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header.jsx';
 import Navbar from './components/Navbar.jsx';
 import LoginPage from './pages/LoginPage.jsx';
-import MisCitasPage from './pages/MisCitasPage.jsx';
 import AgendarPage from './pages/AgendarPage.jsx';
+import MessageCard from './components/MessageCard';
+import MisCitasPage from './pages/MisCitasPage.jsx';
 import EspecialidadesPage from './pages/EspecialidadesPage.jsx';
 import { obtenerEspecialidades, registrarCita, obtenerCitasPorPaciente, cancelarCita } from './services/api.js';
 
@@ -80,6 +81,15 @@ export default function App() {
       </div>
     );
   }
+
+// En tu JSX:
+{error && (
+  <MessageCard 
+    mensaje={error} 
+    tipo="error" 
+    onClose={() => setError(null)} 
+  />
+)}  
 
 return (
     <div className="app-container">
