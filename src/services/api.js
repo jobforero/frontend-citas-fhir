@@ -1,15 +1,19 @@
 import axios from 'axios';
 
-// Comprobación compatible tanto para Vite en navegador como para Jest en Node
+// Obtiene la URL base asegurando que termine sin '/'
 const getBaseUrl = () => {
+  let url = 'http://localhost:8080';
   if (typeof process !== 'undefined' && process.env && process.env.VITE_API_URL) {
-    return process.env.VITE_API_URL;
+    url = process.env.VITE_API_URL;
+  } else {
+    try {
+      url = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+    } catch (e) {
+      url = 'http://localhost:8080';
+    }
   }
-  try {
-    return import.meta.env.VITE_API_URL || 'http://localhost:8080';
-  } catch (e) {
-    return 'http://localhost:8080';
-  }
+  // Si la variable de entorno incluye /api al final, se remueve para no duplicar rutas
+  return url.replace(/\/api\/?$/, '');
 };
 
 const API_BASE_URL = getBaseUrl();
